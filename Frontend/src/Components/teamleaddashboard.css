@@ -1,0 +1,52 @@
+.team-lead-dashboard {
+  padding: 20px;
+  background-color: #f4f4f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.team-lead-dashboard h1,
+.team-lead-dashboard h2,
+.team-lead-dashboard h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.team-lead-dashboard select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  background-color: #fff;
+}
+
+.team-lead-dashboard input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+.team-lead-dashboard button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.team-lead-dashboard button:hover {
+  background-color: #0056b3;
+}
