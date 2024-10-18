@@ -1,6 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./teamleaddashboard.css";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 interface TeamMember {
   _id: string;
@@ -9,7 +20,7 @@ interface TeamMember {
 
 interface Timer {
   task: {
-    description: string; 
+    description: string;
   };
   workspace: {
     name: string;
@@ -21,7 +32,7 @@ interface WorkHours {
   totalHours: number;
   totalMinutes: number;
   name: string;
-  timers: Timer[]; 
+  timers: Timer[];
 }
 
 const AdminViewHours: React.FC = () => {
@@ -78,6 +89,35 @@ const AdminViewHours: React.FC = () => {
     }
   };
 
+  // Prepare data for the bar chart
+  const chartData = {
+    labels: workHours?.timers.map(
+      (timer) => timer.task?.description || "Unknown Task"
+    ),
+    datasets: [
+      {
+        label: "Task Duration (Minutes)",
+        data: workHours?.timers.map((timer) => Math.floor(timer.duration / 60)),
+        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Duration (Minutes)",
+        },
+      },
+    },
+  };
+
   return (
     <div className="team-lead-dashboard">
       <h2>View Team Member Work Hours</h2>
@@ -124,6 +164,11 @@ const AdminViewHours: React.FC = () => {
               </li>
             ))}
           </ul>
+
+          <h4>Task Duration (Bar Chart)</h4>
+          <div style={{ maxWidth: "600px" }}>
+            <Bar data={chartData} options={options} />
+          </div>
         </div>
       )}
     </div>

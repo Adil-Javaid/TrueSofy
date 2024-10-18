@@ -10,13 +10,15 @@ router.post("/:taskId/start-timer", authentication, async (req, res) => {
   const { taskId } = req.params;
 
   try {
-    const task = await Task.findById(taskId);
+    const task = await Task.findById(taskId).populate("workspace"); // Populate workspace
+
     if (!task || task.assignedTo.toString() !== req.user._id.toString()) {
       return res
         .status(404)
         .json({ message: "Task not found or unauthorized" });
     }
 
+    // Check if there is already a running timer for this task and user
     const existingTimer = await Timer.findOne({
       task: taskId,
       user: req.user._id,
@@ -26,9 +28,11 @@ router.post("/:taskId/start-timer", authentication, async (req, res) => {
       return res.status(400).json({ message: "Timer already running" });
     }
 
+    // Create a new timer and include the workspace from the task
     const timer = new Timer({
       user: req.user._id,
       task: taskId,
+      workspace: task.workspace._id, // Pass the workspace ID
       startTime: Date.now(),
     });
 

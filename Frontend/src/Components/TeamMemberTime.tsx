@@ -5,6 +5,8 @@ import {
   startTimer,
   stopTimer,
 } from "../Functionality/useTimer";
+import { Bar, Pie } from "react-chartjs-2";
+import "chart.js/auto";
 import "./teammemberdashboard.css";
 
 interface Task {
@@ -32,6 +34,51 @@ const TeamMemberTime: React.FC = () => {
     fetchDailyWorkHours(setDailyWorkHours);
   }, []);
 
+  // Prepare the data for the Bar Chart (Work Hours)
+  const workHoursData = {
+    labels: ["Total Hours"],
+    datasets: [
+      {
+        label: "Hours",
+        backgroundColor: "rgba(75,192,192,0.4)",
+        borderColor: "rgba(75,192,192,1)",
+        borderWidth: 1,
+        data: [dailyWorkHours.totalHours],
+      },
+      {
+        label: "Minutes",
+        backgroundColor: "rgba(153,102,255,0.4)",
+        borderColor: "rgba(153,102,255,1)",
+        borderWidth: 1,
+        data: [dailyWorkHours.totalMinutes / 60], // Convert minutes to hours
+      },
+    ],
+  };
+
+  // Prepare the data for the Pie Chart (Task Progress)
+  const taskStatusCounts = tasks.reduce(
+    (acc, task) => {
+      acc[task.status] += 1;
+      return acc;
+    },
+    { pending: 0, "in progress": 0, completed: 0 }
+  );
+
+  const taskProgressData = {
+    labels: ["Pending", "In Progress", "Completed"],
+    datasets: [
+      {
+        label: "Task Progress",
+        backgroundColor: ["#FF6384", "#36A2EB", "#4BC0C0"],
+        data: [
+          taskStatusCounts.pending,
+          taskStatusCounts["in progress"],
+          taskStatusCounts.completed,
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="team-member-dashboard">
       <h2>Team Member Dashboard</h2>
@@ -58,8 +105,14 @@ const TeamMemberTime: React.FC = () => {
       )}
 
       <h3>Daily Work Hours</h3>
-      <p>Total Hours: {dailyWorkHours.totalHours}</p>
-      <p>Total Minutes: {dailyWorkHours.totalMinutes}</p>
+      <div className="chart-container">
+        <Bar data={workHoursData} />
+      </div>
+
+      <h3>Task Progress</h3>
+      <div className="chart-container">
+        <Pie data={taskProgressData} />
+      </div>
     </div>
   );
 };
