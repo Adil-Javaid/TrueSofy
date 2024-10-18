@@ -7,6 +7,31 @@ const { authentication, authorized } = require("../middleware/auth");
 router.get(
   "/team-leads",
   authentication,
+  authorized("team_lead"),
+  async (req, res) => {
+    try {
+      
+      const workspaces = await Workspace.find({
+        teamLead: req.user._id, 
+      }).populate("teamLead", "username");
+
+      if (!workspaces.length) {
+        return res
+          .status(404)
+          .json({ message: "No workspaces found for this team lead." });
+      }
+
+      res.json(workspaces);
+    } catch (err) {
+      console.error("Error fetching workspaces:", err);
+      res.status(500).json({ message: "Server error", error: err.message });
+    }
+  }
+);
+
+router.get(
+  "/team-lead",
+  authentication,
   authorized("admin", "team_lead"),
   async (req, res) => {
     try {
@@ -64,7 +89,7 @@ router.post(
 router.get(
   "/all-members",
   authentication,
-  authorized("team_lead"),
+  authorized("admin","team_lead"),
   async (req, res) => {
     try {
       const users = await User.find({ role: "team_member" }).select(

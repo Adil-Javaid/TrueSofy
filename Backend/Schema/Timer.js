@@ -3,24 +3,29 @@ const mongoose = require('mongoose');
 const timerSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   task: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Task',
-    required: true
+    ref: "Task",
+    required: true,
   },
   startTime: {
     type: Date,
-    default: Date.now
+    default: Date.now,
   },
   endTime: {
-    type: Date
+    type: Date,
   },
   duration: {
     type: Number,
-    default: 0
+    default: 0,
+  },
+  workspace: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Workspace",
+    required: true,
   }
 });
 

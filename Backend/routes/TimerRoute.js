@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const User = require("../Schema/User"); 
 const Task = require("../Schema/TaskSchema");
 const { authentication, authorized } = require("../middleware/auth");
 
@@ -86,31 +87,51 @@ router.get('/my-daily-work-hours', authentication, async (req, res) => {
 });
 
 
-router.get('/member/:userId/daily-work-hours', authentication, authorized('admin', 'team_lead'), async (req, res) => {
-  const { userId } = req.params;
-  const { date } = req.query; 
-  const selectedDate = new Date(date).setHours(0, 0, 0, 0);
+router.get(
+  "/member/:userId/daily-work-hours",
+  authentication,
+  authorized("admin", "team_lead"),
+  async (req, res) => {
+    const { userId } = req.params;
+    const { date } = req.query;
+    const selectedDate = new Date(date).setHours(0, 0, 0, 0);
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      
+      const timers = await Timer.find({
+        user: userId,
+        startTime: {
+          $gte: new Date(selectedDate),
+          $lt: new Date(selectedDate + 24 * 60 * 60 * 1000),
+        },
+      })
+        .populate({
+          path: "task",
+          select: "description", 
+        })
+        .populate({
+          path: "workspace",
+          select: "name", 
+        });
+
+      const totalSeconds = timers.reduce(
+        (sum, timer) => sum + timer.duration,
+        0
+      );
+      const totalHours = Math.floor(totalSeconds / 3600);
+      const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+
+      res.json({ user: user.username, totalHours, totalMinutes, timers });
+    } catch (err) {
+      console.error("Error fetching member work hours:", err);
+      res.status(500).json({ message: "Server error", error: err.message });
     }
-
-    const timers = await Timer.find({
-      user: userId,
-      startTime: { $gte: new Date(selectedDate), $lt: new Date(selectedDate + 24 * 60 * 60 * 1000) }
-    });
-
-    const totalSeconds = timers.reduce((sum, timer) => sum + timer.duration, 0);
-    const totalHours = Math.floor(totalSeconds / 3600);
-    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
-
-    res.json({ user: user.username, totalHours, totalMinutes, timers });
-  } catch (err) {
-    console.error('Error fetching member work hours:', err);
-    res.status(500).json({ message: 'Server error', error: err.message });
   }
-});
+);
 
 module.exports = router
