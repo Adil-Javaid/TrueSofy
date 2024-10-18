@@ -89,7 +89,7 @@ const AdminViewHours: React.FC = () => {
     }
   };
 
-  // Prepare data for the bar chart
+  
   const chartData = {
     labels: workHours?.timers.map(
       (timer) => timer.task?.description || "Unknown Task"
