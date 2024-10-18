@@ -20,7 +20,7 @@ export const useTeamLeadDashboard = () => {
 
      try {
        const workspaceResponse = await axios.get(
-         "http://localhost:8000/workspaces/team-leads", // This now fetches only the workspaces for the logged-in team lead
+         "http://localhost:8000/workspaces/team-leads", 
          {
            headers: {
              Authorization: `Bearer ${token}`,

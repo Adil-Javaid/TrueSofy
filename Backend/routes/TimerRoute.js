@@ -54,7 +54,7 @@ router.post("/:taskId/stop-timer", authentication, async (req, res) => {
     }
 
     timer.endTime = Date.now();
-    timer.duration = Math.floor((timer.endTime - timer.startTime) / 1000); // Calculate duration in seconds
+    timer.duration = Math.floor((timer.endTime - timer.startTime) / 1000);
     await timer.save();
 
     res.status(200).json({ message: "Timer stopped", timer });
