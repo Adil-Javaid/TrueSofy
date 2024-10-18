@@ -34,7 +34,7 @@ const TeamMemberTime: React.FC = () => {
     fetchDailyWorkHours(setDailyWorkHours);
   }, []);
 
-  // Prepare the data for the Bar Chart (Work Hours)
+ 
   const workHoursData = {
     labels: ["Total Hours"],
     datasets: [
@@ -50,12 +50,12 @@ const TeamMemberTime: React.FC = () => {
         backgroundColor: "rgba(153,102,255,0.4)",
         borderColor: "rgba(153,102,255,1)",
         borderWidth: 1,
-        data: [dailyWorkHours.totalMinutes / 60], // Convert minutes to hours
+        data: [dailyWorkHours.totalMinutes / 60], 
       },
     ],
   };
 
-  // Prepare the data for the Pie Chart (Task Progress)
+  
   const taskStatusCounts = tasks.reduce(
     (acc, task) => {
       acc[task.status] += 1;
