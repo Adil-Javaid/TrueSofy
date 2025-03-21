@@ -18,7 +18,7 @@ router.post("/signup", async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      role,
+      role, // Ensure the role is correctly set
     });
 
     await user.save();
@@ -37,11 +37,10 @@ router.post("/login", async (req, res) => {
     if (!user) return res.status(400).json({ message: "Invalid credentials" });
 
     const passwordMatched = await bcrypt.compare(password, user.password);
-
     if (!passwordMatched)
-      return res.status(400).json({ message: "Invalid Credentials" });
+      return res.status(400).json({ message: "Invalid credentials" });
 
-    const payload = { id: user.id, role: user.role };
+    const payload = { id: user.id, role: user.role }; // Ensure role is included
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
@@ -49,7 +48,6 @@ router.post("/login", async (req, res) => {
     res.json({ token });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
-    console.log(err)
   }
 });
 

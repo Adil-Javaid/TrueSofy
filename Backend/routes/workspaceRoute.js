@@ -22,7 +22,10 @@ router.post(
   authentication,
   authorized("admin"),
   async (req, res) => {
+    console.log("User making the request:", req.user); // Log the user
     const { name, teamLeadId } = req.body;
+    console.log("Request body:", { name, teamLeadId }); // Log the request body
+
     try {
       const existingWorkspace = await Workspace.findOne({ name });
       if (existingWorkspace) {
@@ -47,7 +50,7 @@ router.post(
 
       res.status(201).json({ message: "Workspace created", workspace });
     } catch (err) {
-      
+      console.error("Error creating workspace:", err); // Log the error
       res.status(500).json({ message: "Server error", error: err.message });
     }
   }

@@ -4,6 +4,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import { AuthProvider } from "./Context/AuthContext";
 import "./index.css";
+import "./App.css"
 
 const container = document.getElementById("root");
 

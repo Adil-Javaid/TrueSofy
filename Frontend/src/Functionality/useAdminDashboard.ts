@@ -57,48 +57,53 @@ export const useAdminDashboard = () => {
   }, [authData, navigate]);
 
   const handleCreateWorkspace = async () => {
-    const token = getToken();
-    if (!token) {
-      console.error("No token found for creating a workspace.");
-      return;
-    }
+  const token = getToken();
+  if (!token) {
+    console.error("No token found for creating a workspace.");
+    return;
+  }
 
-    if (workspaceName && selectedTeamLead) {
-      try {
-        await axios.post(
-          "http://localhost:8000/workspaces/create",
-          {
-            name: workspaceName,
-            teamLeadId: selectedTeamLead,
+  if (workspaceName && selectedTeamLead) {
+    try {
+      console.log("Creating workspace with:", { workspaceName, selectedTeamLead }); // Log the request data
+      const response = await axios.post(
+        "http://localhost:8000/workspaces/create",
+        {
+          name: workspaceName,
+          teamLeadId: selectedTeamLead,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            }
-          }
-        );
-
-        const workspaceResponse = await axios.get(
-          "http://localhost:8000/workspaces",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        setWorkspaces(workspaceResponse.data);
-        setWorkspaceName("");
-        setSelectedTeamLead("");
-      } catch (error) {
-        console.error("Failed to create workspace:", error);
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          navigate("/login");
         }
+      );
+
+      console.log("Workspace created:", response.data); // Log the response
+
+      const workspaceResponse = await axios.get(
+        "http://localhost:8000/workspaces",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setWorkspaces(workspaceResponse.data);
+      setWorkspaceName("");
+      setSelectedTeamLead("");
+    } catch (error) {
+      console.error("Failed to create workspace:", error); // Log the error
+      if (axios.isAxiosError(error)) {
+        console.error("Response data:", error.response?.data); // Log the response data
+      }
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        navigate("/login");
       }
     }
-  };
-
+  }
+};
   return {
     workspaces,
     teamLeads,
